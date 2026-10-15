@@ -25,6 +25,8 @@ THETA = 10000
 IMAGE_ROPE_SCALE = 0.5
 TIME_DIM = 256
 EPS = 1e-6
+TEXT_FP16_SCALE = 2.0 ** -8
+OUT_FP16_SCALE = 2.0 ** -6
 
 
 def timestep_embedding(t, dim=TIME_DIM, max_period=10000):
@@ -124,9 +126,10 @@ class LastLayer(nn.Module):
         self.linear = nn.Linear(hidden, out_channels, bias=False)
         self.adaLN_modulation = nn.Sequential(nn.SiLU(), nn.Linear(hidden, 2 * hidden, bias=False))
 
-    def forward(self, x, vec):
+    def forward(self, x, vec, dtype):
+        # x is the residual stream in its own dtype (float32 under float16 compute), normalized before the cast
         shift, scale = self.adaLN_modulation(vec)[:, None].chunk(2, dim=-1)
-        return self.linear(modulated_norm(x, shift, scale).to(x.dtype))
+        return self.linear(modulated_norm(x, shift, scale).to(dtype))
 
 
 class Block(nn.Module):
@@ -162,7 +165,14 @@ class Block(nn.Module):
         attn = kernels.attention(q, k, split(v).to(q.dtype), transformer_options=transformer_options)
         gate_in, up = self.mlp_in(x_mod).chunk(2, dim=-1)
         del x_mod
-        out = self.attn_out(attn.to(dtype)) + self.mlp_out(F.silu(gate_in) * up)
+        if dtype == torch.float16:
+            # the output projections of tokens that carry Qwen3-VL's massive activations outgrow float16 (single
+            # block 14 on an RTX 2070 with a 320-token prompt); both are linear without bias, so they run on inputs
+            # scaled down by a power of two and their sum is scaled back in float32
+            out = (self.attn_out(attn.to(dtype) * OUT_FP16_SCALE).float()
+                   + self.mlp_out(F.silu(gate_in) * (up * OUT_FP16_SCALE)).float()) / OUT_FP16_SCALE
+        else:
+            out = self.attn_out(attn.to(dtype)) + self.mlp_out(F.silu(gate_in) * up)
         return torch.cat([x[:, a:e] + gate.to(x.dtype) * out[:, a:e].to(x.dtype) for a, e, (_, _, gate) in spans],
                          dim=1)
 
@@ -194,6 +204,14 @@ class Flux3DiT(nn.Module):
 
     def _embed_time(self, t, dtype):
         return self.time_in(timestep_embedding(t).to(dtype))
+
+    def _embed_text(self, context, res_dtype):
+        if context.dtype != torch.float16:
+            return self.txt_in(context).to(res_dtype)
+        # Qwen3-VL's massive activations (~1e4 in a few channels) push txt_in's output past float16's 65504 (measured
+        # on an RTX 2070: inf from the first step, a black image). txt_in is linear and has no bias, so it runs on the
+        # context scaled down by a power of two, exact in floating point, and the result is scaled back in float32
+        return self.txt_in(context * TEXT_FP16_SCALE).to(res_dtype) / TEXT_FP16_SCALE
 
     def forward(self, x, timestep, context, transformer_options=None, ref_latents=None, **kwargs):
         """x (B, 128, H, W) latents, timestep (B,) = sigma, context (B, T, 20480) -> velocity (B, 128, H, W)."""
@@ -231,7 +249,7 @@ class Flux3DiT(nn.Module):
             ref_tokens = self.emb_in["image_cond"](tokens).to(res_dtype).expand(b, -1, -1)
             ids = torch.cat([image_ids(r.shape[-2], r.shape[-1], -1 - i, device) for i, r in enumerate(refs)])
             parts.append((ref_tokens, "image_cond", ids, vec_zero))
-        txt = self.txt_in(context.to(device=device, dtype=dtype)).to(res_dtype)
+        txt = self._embed_text(context.to(device=device, dtype=dtype), res_dtype)
         parts.append((txt, "txt", text_ids(txt.shape[1], device), vec_zero))
 
         blocks = {"image": self.content_mode_blocks["image"], "image_cond": self.content_mode_blocks["image_cond"],
@@ -254,5 +272,5 @@ class Flux3DiT(nn.Module):
         for block in self.single_blocks:
             joint = block(joint, spans, freqs, dtype, transformer_options)
 
-        out = self.final_layer["image"](joint[:, : h * w].to(dtype), vec_img)
+        out = self.final_layer["image"](joint[:, : h * w], vec_img, dtype)
         return out.transpose(1, 2).reshape(b, self.in_channels, h, w)

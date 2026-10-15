@@ -142,6 +142,31 @@ class TestTransformer(unittest.TestCase):
             b = fused.eval().run(self.latent, torch.tensor([0.5]), self.context)
         self.assert_close(a, b)
 
+    def test_fp16_text_embedding_does_not_overflow(self):
+        # a Qwen3-VL massive activation: one channel near 1e4, as measured on the real text encoder
+        mine = ours_from(upstream_dit(False))
+        context = self.context.clone()
+        context[0, 0, 7] = 1.1e4
+        with torch.no_grad():
+            mine.txt_in.weight[:, 7] = 8.0
+            expected = mine.txt_in(context)
+            mine.txt_in.half()
+            naive = mine.txt_in(context.half())
+            got = mine._embed_text(context.half(), torch.float32)
+        self.assertFalse(torch.isfinite(naive).all())
+        self.assertTrue(torch.isfinite(got).all())
+        torch.testing.assert_close(got, expected, rtol=2e-2, atol=2e-1)
+
+    def test_fp16_compute_matches_fp32(self):
+        # the float16 path (GPUs without bfloat16): float32 residual, scaled txt_in and output projections
+        reference = upstream_dit(False)
+        expected = upstream_velocity(reference, self.latent, self.context, 0.5, refs=self.refs[:1])
+        mine = ours_from(reference).half()
+        with torch.no_grad():
+            got = mine.run(self.latent.half(), torch.tensor([0.5]), self.context.half(), [self.refs[0].half()])
+        self.assertTrue(torch.isfinite(got).all())
+        torch.testing.assert_close(got.float(), expected, rtol=5e-2, atol=5e-2)
+
     def test_batch_samples_stay_independent(self):
         mine = ours_from(upstream_dit(False))
         latent = torch.cat([self.latent, torch.randn_like(self.latent)])

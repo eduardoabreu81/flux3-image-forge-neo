@@ -4,7 +4,7 @@
 
 [![Forge Neo](https://img.shields.io/badge/Forge-Neo-blue)](https://github.com/Haoming02/sd-webui-forge-classic/tree/neo)
 [![Gradio](https://img.shields.io/badge/Gradio-4.40.0-orange)](https://gradio.app/)
-[![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen)](https://github.com/eduardoabreu81/flux3-forge-neo)
+[![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen)](https://github.com/eduardoabreu81/flux3-image-forge-neo)
 [![License](https://img.shields.io/badge/License-AGPL--3.0-green.svg)](LICENSE)
 
 > **Extension for [Stable Diffusion WebUI Forge - Neo](https://github.com/Haoming02/sd-webui-forge-classic/tree/neo)**
@@ -15,9 +15,6 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 
 > [!Important]
 > This extension requires an up-to-date **Forge Neo** (the `neo` branch). On an older version it stays disabled and tells you so in the console - Forge Neo itself keeps working as usual.
-
-> [!Warning]
-> **Preview.** The model code matches Black Forest Labs' reference implementation number for number in the tests, but this version has not been run on a GPU yet. Please report anything that looks wrong.
 
 ---
 
@@ -40,6 +37,7 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 - **Reference images** - edit a picture, or combine up to 10 of them, as with FLUX.2 Klein.
 - **flux3 UI preset** - sampler, schedule, steps and CFG ready to generate.
 - **FLUX.3 schedule** - the exact steps of Black Forest Labs' own code.
+- **Older GPUs** - works on cards without bf16 (RTX 20xx), tested on an 8 GB RTX 2070.
 
 ---
 
@@ -52,6 +50,8 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 - Uses the same text encoder as Krea 2 and Iris 3B, and the same autoencoder as FLUX.2 - if you have them, you already have these files
 - The distilled checkpoint makes an image in 16 steps without CFG; the base checkpoint, for LoRA training and research, uses 50 steps at CFG 3.5
 - Loads the BF16, INT8 ConvRot (8 GB GPUs) and NVFP4 (RTX 50) files
+- On an 8 GB RTX 2070 with the INT8 files: a 1024x1024 image in about 25 seconds with the distilled checkpoint, an edit with one reference in about a minute
+- Works on GPUs without bf16 (RTX 20xx and older): the few values that outgrow float16 are kept in range, with no slowdown
 
 ### 🧩 Reference Images
 
@@ -81,7 +81,7 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 
 1. Open Forge Neo WebUI
 2. Go to **Extensions** → **Install from URL**
-3. Paste: `https://github.com/eduardoabreu81/flux3-forge-neo`
+3. Paste: `https://github.com/eduardoabreu81/flux3-image-forge-neo`
 4. Click **Install** and restart the WebUI
 5. Accept the license on [black-forest-labs/flux-3-image-klein-comfy](https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy) and place the files in the usual folders:
 
@@ -140,6 +140,6 @@ AGPL-3.0 - see [LICENSE](LICENSE)
 
 Made with ❤️ for the Stable Diffusion community
 
-**[Report Bug](https://github.com/eduardoabreu81/flux3-forge-neo/issues)** • **[Request Feature](https://github.com/eduardoabreu81/flux3-forge-neo/issues)** • **[☕ Ko-fi](https://ko-fi.com/eduardoabreu81)**
+**[Report Bug](https://github.com/eduardoabreu81/flux3-image-forge-neo/issues)** • **[Request Feature](https://github.com/eduardoabreu81/flux3-image-forge-neo/issues)** • **[☕ Ko-fi](https://ko-fi.com/eduardoabreu81)**
 
 </div>
