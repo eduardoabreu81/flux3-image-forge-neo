@@ -47,6 +47,12 @@ def check() -> list[str]:
             problems.append(f"{module_name} is missing {', '.join(missing)}")
 
     if not problems:
+        from backend.args import dynamic_args
+
+        missing = [n for n in ("can_reference", "is_referencing", "ref_latents") if not hasattr(dynamic_args, n)]
+        if missing:
+            problems.append(f"backend.args.dynamic_args is missing {', '.join(missing)}")
+
         from backend import loader
 
         source = inspect.getsource(loader.load_huggingface_component)

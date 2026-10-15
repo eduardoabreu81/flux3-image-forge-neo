@@ -93,6 +93,23 @@ def _hook_sigmas() -> None:
     KDiffusionSampler.get_sigmas = get_sigmas
 
 
+def _hook_references() -> None:
+    # ImageStitch (Forge's multi-reference input) only runs for the models dynamic_args.can_reference names, keyed on
+    # loader flags; FLUX 3 cannot borrow FLUX.2's "klein" flag, which also swaps the Automatic schedule for Flux2's
+    from backend.args import dynamic_args
+
+    original = dynamic_args.can_reference
+
+    def can_reference(cls) -> bool:
+        if original():
+            return True
+        from modules import shared
+
+        return bool(getattr(shared.sd_model, "is_flux3", False))
+
+    dynamic_args.can_reference = classmethod(can_reference)
+
+
 def _register_scheduler() -> None:
     from modules import sd_schedulers, shared
 
@@ -122,6 +139,7 @@ def apply() -> None:
     _hook_components()
     _hook_cond_concat()
     _hook_sigmas()
+    _hook_references()
     try:
         _register_scheduler()
     except Exception as e:
