@@ -56,12 +56,14 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 ### 🧩 Reference Images
 
 - img2img with **Settings** → **[Klein] Enable Reference** on: the input picture becomes the reference, and the prompt describes the result
-- More references with Forge Neo's **ImageStitch**, up to 10
+- Combine up to 10 pictures with Forge Neo's **ImageStitch Integrated**, in txt2img or img2img - refer to them in the prompt as "the first image", "the second image"... (three references at 832x1248 take about 85 seconds on an RTX 2070)
 - Write the prompt as a full description of the picture you want, with the change folded in - a short instruction such as "make it blue" gives a different framing
 
 ### 📐 Layout by Bounding Boxes
 
 - Append the boxes as JSON to the prompt, exactly as in [Black Forest Labs' guide](https://docs.bfl.ai/flux_3/flux3_image_bounding_boxes) - each box `[top, left, bottom, right]` on a 0-1000 grid, tagged in the caption with `<id>`
+- Edits by box work too: refer to a reference as `<ref_image_1>` and give the element `from`, `src_bbox` and `tgt_bbox`
+- Works with **sd-dynamic-prompts** installed: it removes the `{ }` of the JSON, and the extension puts them back before the prompt reaches the model
 
 ### 🔌 LoRA
 

@@ -13,6 +13,8 @@ from backend.args import dynamic_args
 from backend.text_processing import emphasis
 from backend.text_processing._comfy import INF, SDClipModel, SDTokenizer
 
+from .layout import restore_layout_json
+
 PAD = 151643
 HIDDEN_LAYERS = [4, 8, 12, 16, 20, 24, 28, 32]
 TEMPLATE = "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n"
@@ -60,8 +62,10 @@ class Flux3TextEngine:
 
     def token_ids(self, text: str) -> list[int]:
         # surrounding whitespace is dropped (as Forge's Krea 2 engine does): "", " " and a prompt left with only
-        # LoRA tags are all upstream's empty prompt, the CFG unconditional of the base checkpoint
-        return self.tokenizer.tokenizer.encode(TEMPLATE.format(text.strip()), add_special_tokens=False)[:MAX_LENGTH]
+        # LoRA tags are all upstream's empty prompt, the CFG unconditional of the base checkpoint. A bounding-box
+        # layout whose braces sd-dynamic-prompts stripped is rebuilt first (layout.py)
+        text = restore_layout_json(text.strip())
+        return self.tokenizer.tokenizer.encode(TEMPLATE.format(text), add_special_tokens=False)[:MAX_LENGTH]
 
     def tokenize(self, texts: str | list[str]) -> int | list[int]:
         if isinstance(texts, str):
