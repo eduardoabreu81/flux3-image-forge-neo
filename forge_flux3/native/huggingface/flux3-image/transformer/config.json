@@ -1,0 +1,17 @@
+{
+  "_class_name": "Flux3Transformer2DModel",
+  "_diffusers_version": "0.37.0",
+  "hidden_size": 3072,
+  "num_heads": 24,
+  "depth": 5,
+  "depth_single_blocks": 28,
+  "mlp_hidden": 9216,
+  "in_channels": 128,
+  "text_dim": 20480,
+  "axes_dim": [32, 32, 32, 32],
+  "theta": 10000,
+  "image_rope_scale": 0.5,
+  "text_encoder_layers": [4, 8, 12, 16, 20, 24, 28, 32],
+  "text_pad_multiple": 80,
+  "shift": 6.93
+}

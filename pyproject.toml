@@ -1,0 +1,12 @@
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+# upstream's code, vendored unmodified as the tests' reference
+extend-exclude = ["tests/reference"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "PLW1510", "RUF059"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["E402"]
+"tools/*.py" = ["E402"]
