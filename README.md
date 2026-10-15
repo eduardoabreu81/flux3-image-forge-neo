@@ -36,7 +36,7 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 - **FLUX 3 Image Klein in Forge Neo** - the 16-step distilled model and the base model, in BF16, INT8 and NVFP4 files.
 - **Reference images** - edit a picture, or combine up to 10 of them, with img2img and ImageStitch.
 - **Layout by boxes** - place, add, move or remove things by giving their boxes in the prompt.
-- **FLUX 3 Layout panel** - draw the boxes with the mouse, and the panel writes them into the prompt.
+- **Draw the boxes with the mouse** - with the companion [Regional Boxes](https://github.com/eduardoabreu81/sd-regional-boxes-neo) extension.
 - **flux3 UI preset** and **FLUX.3** schedule - ready to generate.
 - **Older GPUs** - works on cards without bf16 (RTX 20xx), tested on an 8 GB RTX 2070.
 
@@ -74,14 +74,12 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 - Each box is `[top, left, bottom, right]` on a 0-1000 grid, with a short description, and the caption mentions it by its name, such as `<vase_1>`
 - Works with **sd-dynamic-prompts** installed
 
-### 🖱️ FLUX 3 Layout Panel
+### 🖱️ Draw the Boxes
 
-<p align="center"><img src=".github/images/layout-panel.jpg" alt="The FLUX 3 Layout panel with a teapot box and a vase box, and the picture made from them" width="720"></p>
+<p align="center"><img src=".github/images/layout-panel.jpg" alt="The box panel with a teapot box and a vase box, and the picture made from them" width="720"></p>
 
-- No need to type coordinates: open **FLUX 3 Layout** in txt2img or img2img and drag on the frame to draw each box
-- Give each box a name and a short description, and choose what it does: **place** it in a new picture, **add new** to a reference, take it **from reference** to move or keep it, or **remove** it
-- The **`<name>`** button puts the box's tag at the cursor in your caption; **Write to prompt** adds the list of boxes to the prompt, or updates the one already there; **Read from prompt** loads it back to adjust
-- In img2img the input picture shows behind the frame, so you can draw right over the things to change
+- No need to type coordinates: install the companion **[Regional Boxes](https://github.com/eduardoabreu81/sd-regional-boxes-neo)** extension, drag on its frame to draw each box, and it writes the list into the prompt
+- It also places, adds, moves and removes things for box edits, with the input picture behind the frame in img2img
 
 ### ✂️ Edit by Boxes
 
