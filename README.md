@@ -62,7 +62,7 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 
 <p align="center"><img src=".github/images/references.jpg" alt="A fox, the same fox with a red scarf, and the fox on a church pew under a poster, from three references" width="720"></p>
 
-- **One picture:** img2img with **Settings** → **[Klein] Enable Reference** on - the input becomes the reference, and the prompt describes the result
+- **One picture:** add it in **ImageStitch Integrated** in txt2img, or use it as the img2img input - either way it becomes the reference, and the prompt describes the result
 - **Several pictures:** add them in **ImageStitch Integrated**, in txt2img or img2img, up to 10, and refer to them in the prompt as "the first image", "the second image"...
 - An edit with one reference takes about a minute on an RTX 2070; three references, about a minute and a half
 
