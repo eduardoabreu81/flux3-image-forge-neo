@@ -26,14 +26,14 @@ def forge_grid(shift, multiplier=1.0, timesteps=1000):
 class TestScheduler(unittest.TestCase):
     def test_matches_upstream(self):
         for steps in (16, 50, 4):
-            torch.testing.assert_close(scheduler.schedule(steps), upstream_timesteps(steps, 6.93))
+            torch.testing.assert_close(scheduler.schedule(steps), upstream_timesteps(steps, 16.0))
 
     def test_ends_at_zero(self):
         self.assertEqual(float(scheduler.sigmas(16)[-1]), 0.0)
         self.assertEqual(float(scheduler.sigmas(16)[0]), 1.0)
 
     def test_shift_read_back_from_the_model_grid(self):
-        for shift in (6.93, 3.0, 1.0):
+        for shift in (16.0, 6.93, 3.0, 1.0):
             model = types.SimpleNamespace(sigmas=forge_grid(shift))
             self.assertAlmostEqual(scheduler.shift_of(model), shift, places=4)
         self.assertEqual(scheduler.shift_of(None), scheduler.SHIFT)

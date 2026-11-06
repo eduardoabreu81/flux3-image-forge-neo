@@ -5,9 +5,10 @@
 
 import torch
 
-# upstream's schedule: t' = alpha t / (1 + (alpha - 1) t) on linspace(1, 0) with alpha 6.93, which is Forge's
-# discrete-flow time shift (ComfyUI writes it as the Flux exponential shift, mu = ln 6.93)
-SHIFT = 6.93
+# upstream's schedule: t' = alpha t / (1 + (alpha - 1) t) on linspace(1, 0) with alpha 16 (upstream's default and
+# its ComfyUI workflows' since 62e90b9; the first release used 6.93), which is Forge's discrete-flow time shift
+# (ComfyUI writes it as the Flux exponential shift, mu = ln 16)
+SHIFT = 16.0
 
 NAME = "flux3"
 LABEL = "FLUX.3"

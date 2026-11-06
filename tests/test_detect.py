@@ -42,20 +42,20 @@ class TestDetect(unittest.TestCase):
         return state, module
 
     def test_base_bf16(self):
-        state, module = self.check("flux3_image_klein_bf16", flow_map=False, fused=False)
+        state, module = self.check("flux3-image-klein-base-bf16", flow_map=False, fused=False)
         for key, tensor in module.items():
             self.assertEqual(tuple(tensor.shape), tuple(state[key]["shape"]), key)
 
     def test_distilled_bf16(self):
-        state, module = self.check("flux3_image_klein_sd_bf16", flow_map=True, fused=False)
+        state, module = self.check("flux3-image-klein-bf16", flow_map=True, fused=False)
         for key, tensor in module.items():
             self.assertEqual(tuple(tensor.shape), tuple(state[key]["shape"]), key)
 
     def test_distilled_int8_convrot(self):
-        self.check("flux3_image_klein_sd_int8_convrot", flow_map=True, fused=True)
+        self.check("flux3-image-klein-int8-convrot", flow_map=True, fused=True)
 
     def test_distilled_nvfp4(self):
-        self.check("flux3_image_klein_sd_nvfp4", flow_map=True, fused=False)
+        self.check("flux3-image-klein-nvfp4", flow_map=True, fused=False)
 
 
 if __name__ == "__main__":

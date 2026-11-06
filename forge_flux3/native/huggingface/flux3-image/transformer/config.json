@@ -13,5 +13,5 @@
   "image_rope_scale": 0.5,
   "text_encoder_layers": [4, 8, 12, 16, 20, 24, 28, 32],
   "text_pad_multiple": 80,
-  "shift": 6.93
+  "shift": 16.0
 }

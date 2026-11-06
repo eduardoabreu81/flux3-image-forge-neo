@@ -4,7 +4,7 @@
 
 [![Forge Neo](https://img.shields.io/badge/Forge-Neo-blue)](https://github.com/Haoming02/sd-webui-forge-classic/tree/neo)
 [![Gradio](https://img.shields.io/badge/Gradio-4.40.0-orange)](https://gradio.app/)
-[![Version](https://img.shields.io/badge/Version-0.1.1-brightgreen)](https://github.com/eduardoabreu81/flux3-image-forge-neo)
+[![Version](https://img.shields.io/badge/Version-0.1.2-brightgreen)](https://github.com/eduardoabreu81/flux3-image-forge-neo)
 [![License](https://img.shields.io/badge/License-AGPL--3.0-green.svg)](LICENSE)
 
 > **Extension for [Stable Diffusion WebUI Forge - Neo](https://github.com/Haoming02/sd-webui-forge-classic/tree/neo)**
@@ -30,6 +30,11 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 ---
 
 ## 🆕 What's New
+
+### v0.1.2 - Black Forest Labs' New Defaults
+
+- **New sampling defaults** - the FLUX.3 schedule and the base model's CFG now follow the values Black Forest Labs and ComfyUI use. The same seed gives a different picture than before.
+- **New file names** - the installation table lists the names on Hugging Face today. Files you already have keep working.
 
 ### v0.1.1 - Works Alongside Other Extensions
 
@@ -115,12 +120,12 @@ Generate with **[FLUX 3 Image Klein](https://huggingface.co/black-forest-labs/fl
 
 | Part | File | Folder |
 | :--- | :--- | :--- |
-| FLUX 3 checkpoint, distilled | `flux3_image_klein_sd_int8_convrot` (8 GB GPUs), `flux3_image_klein_sd_bf16` or `flux3_image_klein_sd_nvfp4` (RTX 50) | `models/Stable-diffusion` |
-| FLUX 3 checkpoint, base (optional) | `flux3_image_klein_int8_convrot`, `flux3_image_klein_bf16` or `flux3_image_klein_nvfp4` | `models/Stable-diffusion` |
+| FLUX 3 checkpoint, distilled | `flux3-image-klein-int8-convrot` (8 GB GPUs), `flux3-image-klein-bf16` or `flux3-image-klein-nvfp4` (RTX 50) | `models/Stable-diffusion` |
+| FLUX 3 checkpoint, base (optional) | `flux3-image-klein-base-int8-convrot`, `flux3-image-klein-base-bf16` or `flux3-image-klein-base-nvfp4` | `models/Stable-diffusion` |
 | Qwen3-VL 4B text encoder | `qwen3vl_4b_int8_convrot` or `qwen3vl_4b_bf16` - Krea 2's `qwen3vl_4b_fp8_scaled` works too | `models/text_encoder` |
 | FLUX.2 autoencoder | `flux2-vae` | `models/VAE` |
 
-Files with `_sd_` in the name are the distilled model; the others are the base model.
+Files with `-base-` in the name are the base model; the others are the distilled model. Files downloaded under the old names keep working: among those, `_sd_` marks the distilled model.
 
 6. Pick the **flux3** UI preset, the checkpoint, and the text encoder and autoencoder under **VAE / Text Encoder**
 
@@ -130,8 +135,8 @@ Files with `_sd_` in the name are the distilled model; the others are the base m
 
 | Model | Sampler | Schedule type | Steps | CFG |
 | :--- | :--- | :--- | :--- | :--- |
-| **Distilled** (`_sd_`) | Euler | FLUX.3 | 16 | 1 |
-| **Base** | Euler | FLUX.3 | 50 | 3.5 |
+| **Distilled** | Euler | FLUX.3 | 16 | 1 |
+| **Base** | Euler | FLUX.3 | 50 | 4 |
 
 The **flux3** preset sets the distilled model's values. Leave the **negative prompt** empty, and use sides that are a multiple of 16. For edits with a reference, use **Denoising strength** 1.
 

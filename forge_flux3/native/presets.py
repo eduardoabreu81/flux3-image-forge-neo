@@ -9,7 +9,7 @@ from modules_forge import presets
 PRESET = "flux3"
 
 # the distilled checkpoint's defaults (upstream generate.py: 16 steps, no CFG); the base checkpoint wants
-# 50 steps at CFG 3.5, set by hand
+# 50 steps at CFG 4, set by hand
 SAMPLER = "Euler"
 SCHEDULER = "FLUX.3"
 FALLBACK_SCHEDULER = "Simple"
