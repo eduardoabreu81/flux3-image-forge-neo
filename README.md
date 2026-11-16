@@ -1,3 +1,7 @@
+<p align="center">
+  <img src=".github/banner.jpg" alt="FLUX 3 Image Klein for Forge Neo banner"/>
+</p>
+
 # 🖼️ FLUX 3 Image Klein for Forge Neo
 
 <div align="center">
